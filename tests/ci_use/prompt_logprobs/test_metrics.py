@@ -38,10 +38,10 @@ from e2e.utils.serving_utils import (
     is_port_open,
 )
 
-from ce.server.core import TEMPLATE, URL, build_request_payload, send_request
+# from ce.server.core import TEMPLATE, URL
 # from core import TEMPLATE, URL, build_request_payload, send_request
 
-COMPLETIONS_URL = None
+URL, COMPLETIONS_URL = None, None
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_and_run_server():
@@ -60,7 +60,7 @@ def setup_and_run_server():
     # env["CUDA_VISIBLE_DEVICES"] = "0,1"
     env["TEMPLATE"] = "TOKEN_LOGPROB"
     env["FD_USE_GET_SAVE_OUTPUT_V2"] = "1"
-    env["URL"] = f"http://0.0.0.0:{FD_API_PORT}/v1"
+    URL = f"http://0.0.0.0:{FD_API_PORT}/v1"
     COMPLETIONS_URL = URL.replace("/v1/chat/completions", "/v1/completions")
 
 
@@ -68,7 +68,8 @@ def setup_and_run_server():
     if base_path:
         model_path = os.path.join(base_path, "ERNIE-4.5-0.3B-Paddle")
     else:
-        model_path = "/MODELDATA/ERNIE-4.5-0.3B-Paddle"
+        # model_path = "/MODELDATA/ERNIE-4.5-0.3B-Paddle"
+        model_path = "/root/paddlejob/workspace/env_run/xujing43/0.3B"
 
     log_path = "server.log"
     cmd = [
@@ -140,8 +141,8 @@ def test_unstream_with_prompt_logprobs():
     }
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(URL, data)
     resp_json = response.json()
 
     # 校验返回内容与概率信息
@@ -178,8 +179,8 @@ def test_unstream_with_prompt_logprobs_zero():
     }
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(URL, data)
     # print(json.dumps(response.json(), indent=2, ensure_ascii=False))
     resp_json = response.json()
 
@@ -216,8 +217,8 @@ def test_unstream_with_prompt_logprobs_none():
     }
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(URL, data)
     # print(json.dumps(response.json(), indent=2, ensure_ascii=False))
     resp_json = response.json()
 
@@ -245,8 +246,8 @@ def test_unstream_with_prompt_logprobs_n():
     }
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(URL, data)
     # print(json.dumps(response.json(), indent=2, ensure_ascii=False))
     resp_json = response.json()
 
@@ -278,8 +279,8 @@ def test_stream_with_prompt_logprobs():
         "return_token_ids": True,
     }
 
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(URL, data)
 
     result_chunk = {}
     for line in response.iter_lines():
@@ -313,8 +314,8 @@ def test_unstream_with_prompt_logprobs_completions():
     data = {"stream": False, "prompt": "牛顿的三大运动定律是什么？", "max_tokens": 3, "prompt_logprobs": 3}
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(COMPLETIONS_URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(COMPLETIONS_URL, data)
     resp_json = response.json()
     # print(json.dumps(resp_json, indent=2, ensure_ascii=False))
 
@@ -343,8 +344,8 @@ def test_unstream_with_prompt_logprobs_zero_completions():
     }
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(COMPLETIONS_URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(COMPLETIONS_URL, data)
     # print(json.dumps(response.json(), indent=2, ensure_ascii=False))
     resp_json = response.json()
 
@@ -367,8 +368,8 @@ def test_unstream_with_prompt_logprobs_chunk():
     data = {"stream": False, "prompt": [10] * (32 * 1024), "max_tokens": 1, "return_token_ids": True}
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(COMPLETIONS_URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(COMPLETIONS_URL, data)
     resp_json = response.json()
 
     # 校验返回内容与概率信息
@@ -385,8 +386,8 @@ def test_unstream_with_prompt_logprobs_none_completions():
     data = {"stream": False, "prompt": "牛顿的三大运动定律是什么？", "max_tokens": 3, "return_token_ids": True}
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(COMPLETIONS_URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(COMPLETIONS_URL, data)
     # print(json.dumps(response.json(), indent=2, ensure_ascii=False))
     resp_json = response.json()
 
@@ -404,8 +405,8 @@ def test_unstream_with_prompt_logprobs_n_completions():
     data = {"stream": False, "prompt": "牛顿的三大运动定律是什么？", "max_tokens": 3, "prompt_logprobs": 3, "n": 3}
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(COMPLETIONS_URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(COMPLETIONS_URL, data)
     # print(json.dumps(response.json(), indent=2, ensure_ascii=False))
     resp_json = response.json()
 
@@ -434,8 +435,8 @@ def test_stream_with_prompt_logprobs_completions():
         # "return_token_ids":True
     }
 
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(COMPLETIONS_URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(COMPLETIONS_URL, data)
 
     result_chunk = {}
     first_packet = True
@@ -478,8 +479,8 @@ def test_unstream_with_prompt_logprobs_list_completions():
     }
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(COMPLETIONS_URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(COMPLETIONS_URL, data)
     # print(json.dumps(response.json(), ensure_ascii=False))
     resp_json = response.json()
 
@@ -509,8 +510,8 @@ def test_unstream_with_prompt_logprobs_no_decode_completions():
     }
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(COMPLETIONS_URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(COMPLETIONS_URL, data)
     # print(json.dumps(response.json(), ensure_ascii=False))
     resp_json = response.json()
 
@@ -544,8 +545,8 @@ def test_unstream_with_prompt_logprobs_no_decode():
     }
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(URL, data)
     # print(json.dumps(response.json(), ensure_ascii=False))
     resp_json = response.json()
 
@@ -581,13 +582,33 @@ def test_error_with_prompt_logprobs():
     }
 
     # 构建请求并发送
-    payload = build_request_payload(TEMPLATE, data)
-    response = send_request(URL, payload)
+    # payload = build_request_payload(TEMPLATE, data)
+    response = send_request(URL, data)
     resp_json = response.json()
 
     assert (
         "Number of prompt_logprobs requested (15) exceeds maximum allowed value (10)" in resp_json["error"]["message"]
     )
+
+
+def send_request(url, payload, timeout=600, stream=False):
+    """
+    向指定URL发送POST请求，并返回响应结果。
+
+    Args:
+        url (str): 请求的目标URL。
+        payload (dict): 请求的负载数据，应该是一个字典类型。
+        timeout (int, optional): 请求的超时时间，默认为600秒。
+        stream (bool, optional): 是否以流的方式下载响应内容，默认为False。
+
+    Returns:
+        response: 请求的响应结果，如果请求失败则返回None。
+    """
+    headers = {
+        "Content-Type": "application/json",
+    }
+    res = requests.post(url, headers=headers, json=payload, stream=stream, timeout=timeout)
+    return res
 
 
 if __name__ == "__main__":
@@ -598,5 +619,6 @@ if __name__ == "__main__":
     # 3. 运行所有测试用例
     # 4. 运行完后自动执行 fixture 的 teardown 杀掉服务
     sys.exit(pytest.main([__file__, "-sv"]))
+
 
 
